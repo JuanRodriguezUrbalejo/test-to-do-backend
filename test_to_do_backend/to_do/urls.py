@@ -6,6 +6,7 @@ urlpatterns = [
     path('tarea/lista/', TaskViewSet.as_view({'get':'list'})),
     path('tarea/crear/', TaskViewSet.as_view({'post':'create'})),
     path('tarea/<int:pk>/', TaskViewSet.as_view({'get':'retrieve','put':'partial_update','delete':'destroy'})),
+    path('tarea/lista/<int:pk>/', TaskViewSet.as_view({'get':'task_from_list'})),
 
     #URL para las listas
     path('lista/lista/', ListViewSet.as_view({'get':'list'})),

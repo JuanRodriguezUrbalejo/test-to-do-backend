@@ -19,6 +19,16 @@ class TaskViewSet(viewsets.ModelViewSet):
         instance.is_active = False
         instance.save()
 
+    @action(detail = True, methods = ['get'])
+    def task_from_list(self, request, pk = None):
+        try:
+            list = Lists.objects.get(pk = pk)
+            tasks = Tasks.objects.filter(list = list, is_active = True)
+            serializer = self.get_serializer(tasks, many = True)
+            return Response(serializer.data, status = status.HTTP_200_OK)
+        except:
+            return Response({'error': 'Error al encontrar la lista'}, status = status.HTTP_404_NOT_FOUND)
+
 class ListViewSet(viewsets.ModelViewSet):
     serializer_class = ListsSerializer
     
@@ -34,6 +44,19 @@ class ListViewSet(viewsets.ModelViewSet):
             task.is_active = False
             task.save()
 
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        new_name = request.data.get('name',None)
+
+        if new_name == instance.name:
+            return Response({'error': 'Nombre no se pudo actualizar'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if new_name:
+            instance.name = new_name
+            instance.save()
+            return Response({'message': 'Nombre actualizado'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Nombre no se pudo actualizar'}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=True, methods=['get'])
     def tasks(self, request, pk=None):
         """
@@ -42,3 +65,4 @@ class ListViewSet(viewsets.ModelViewSet):
         list_instance = self.get_object()
         serializer = self.get_serializer(list_instance)
         return Response(serializer.data)
+
