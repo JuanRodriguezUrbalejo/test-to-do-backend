@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework import status, viewsets
 
 from .models import Lists, Tasks
@@ -33,3 +34,11 @@ class ListViewSet(viewsets.ModelViewSet):
             task.is_active = False
             task.save()
 
+    @action(detail=True, methods=['get'])
+    def tasks(self, request, pk=None):
+        """
+        Retorna una lista con todas las tareas asociadas a la lista especificada por el id.
+        """
+        list_instance = self.get_object()
+        serializer = self.get_serializer(list_instance)
+        return Response(serializer.data)
