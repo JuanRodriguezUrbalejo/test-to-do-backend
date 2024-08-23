@@ -7,7 +7,7 @@ class Lists(models.Model):
     is_active = models.BooleanField(default = True, verbose_name = 'Activo')
     
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.name} - {self.id}'
 
 
 class Tasks(models.Model):
